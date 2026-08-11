@@ -8,13 +8,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0F1115;
-    --surface:#171A21;
-    --surface-2:#1D212A;
-    --border:#2A2F3A;
-    --text:#E8E6E1;
-    --text-dim:#9A9FAC;
-    --text-faint:#5C6270;
+    --bg:#EDE6D3;
+    --surface:#FAF7EF;
+    --surface-2:#F1EAD8;
+    --border:#DFD3B4;
+    --text:#2B271E;
+    --text-dim:#6B6252;
+    --text-faint:#9C927E;
     /* TM SQUAD: naranja→rosa del anillo de su logo */
     --tm:#FF5F40;
     --tm-2:#E1306C;
@@ -25,9 +25,9 @@
     --isa-2:#833AB4;
     --isa-grad:linear-gradient(135deg,#FFD000,#FCAF45);
     --isa-dim:#2B2508;
-    --good:#3DDC97;
-    --warn:#FFC857;
-    --bad:#FF5C7A;
+    --good:#1E9E6B;
+    --warn:#C98A2E;
+    --bad:#D6335A;
     --radius:10px;
     --radius-lg:16px;
   }
@@ -206,8 +206,8 @@
   }
   .cal-cell:hover{background:var(--surface-2);}
   .cal-cell:nth-child(7n){border-right:none;}
-  .cal-cell.empty{background:#0D0F13;cursor:default;}
-  .cal-cell.empty:hover{background:#0D0F13;}
+  .cal-cell.empty{background:var(--bg);cursor:default;}
+  .cal-cell.empty:hover{background:var(--bg);}
   .cal-cell .daynum{
     font-size:12px;color:var(--text-faint);font-weight:500;
     font-family:'JetBrains Mono',monospace;
@@ -312,7 +312,7 @@
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     background-clip:text;
   }
-  .kpi-card .value.isa{color:#FFD000;}
+  .kpi-card .value.isa{color:#A67C00;}
   .kpi-card .value.good{color:var(--good);}
   .kpi-card .delta{font-size:11.5px;margin-top:6px;color:var(--text-dim);}
 
@@ -494,7 +494,7 @@
                 <th>Comunidad</th><th>Mes</th>
                 <th class="num">Likes</th><th class="num">Coment.</th><th class="num">Compart.</th>
                 <th class="num">Guardados</th><th class="num">Alcance</th>
-                <th class="num">Interac. totales</th><th class="num">Engagement</th><th></th>
+                <th class="num">Interac. totales</th><th class="num">Engagement (interac./alcance)</th><th></th>
               </tr>
             </thead>
             <tbody id="eng-table-body"></tbody>
@@ -509,7 +509,7 @@
       <div class="view-head">
         <div>
           <h2>Seguidores</h2>
-          <p>Lleva el control de seguidores totales y seguidores de tienda por comunidad, mes a mes.</p>
+          <p>Lleva el control de seguidores totales, seguidores staff, HC tienda y alcance HC por comunidad, mes a mes.</p>
         </div>
         <button class="btn" id="btn-new-foll">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -535,8 +535,9 @@
             <thead>
               <tr>
                 <th>Comunidad</th><th>Mes</th>
-                <th class="num">Seguidores totales</th><th class="num">Seguidores tienda</th>
-                <th class="num">% Tienda</th><th class="num">Variación</th><th></th>
+                <th class="num">Seguidores totales</th><th class="num">Seguidores Staff</th>
+                <th class="num">HC Tienda</th><th class="num">Alcance HC</th>
+                <th class="num">% Seguidores tienda</th><th class="num">Variación</th><th></th>
               </tr>
             </thead>
             <tbody id="foll-table-body"></tbody>
@@ -710,7 +711,11 @@
       </div>
       <div class="field-row">
         <div class="field"><label>Seguidores totales</label><input type="number" id="foll-total" min="0" required></div>
-        <div class="field"><label>Seguidores de tienda</label><input type="number" id="foll-tienda" min="0" required></div>
+        <div class="field"><label>Seguidores Staff</label><input type="number" id="foll-staff" min="0" required></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>HC Tienda</label><input type="number" id="foll-hc" min="0" required></div>
+        <div class="field"><label>Alcance HC</label><input type="number" id="foll-alcance-hc" min="0" required></div>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" data-close="overlay-foll">Cancelar</button>
@@ -757,8 +762,8 @@
         {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, likes:980, coment:75, share:40, saves:55, alcance:6200},
       ],
       seguidores:[
-        {id:cryptoId(), com:"TM SQUAD", mes:MESES[today.getMonth()], anio:y, total:24500, tienda:3100},
-        {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, total:15800, tienda:2050},
+        {id:cryptoId(), com:"TM SQUAD", mes:MESES[today.getMonth()], anio:y, total:24500, staff:180, hcTienda:45, alcanceHC:38},
+        {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, total:15800, staff:120, hcTienda:30, alcanceHC:22},
       ]
     };
   }
@@ -1043,13 +1048,13 @@
     const sum = key => rows.reduce((a,r)=>a+r[key],0);
     const totalInter = sum("likes")+sum("coment")+sum("share")+sum("saves");
     const totalAlcance = sum("alcance");
-    const engRate = totalAlcance ? (totalInter/totalAlcance*100) : 0;
+    const engRate = totalAlcance ? (totalInter/totalAlcance) : 0;
 
     const kpiWrap = document.getElementById("eng-kpis");
     kpiWrap.innerHTML = `
       <div class="kpi-card"><div class="label">Interacciones totales</div><div class="value">${totalInter.toLocaleString("es")}</div><div class="delta">likes + comentarios + compartidos + guardados</div></div>
       <div class="kpi-card"><div class="label">Alcance acumulado</div><div class="value">${totalAlcance.toLocaleString("es")}</div><div class="delta">cuentas alcanzadas en el filtro actual</div></div>
-      <div class="kpi-card"><div class="label">Tasa de engagement</div><div class="value good">${engRate.toFixed(2)}%</div><div class="delta">interacciones / alcance</div></div>
+      <div class="kpi-card"><div class="label">Tasa de engagement</div><div class="value good">${engRate.toFixed(3)}</div><div class="delta">interacciones / alcance</div></div>
       <div class="kpi-card"><div class="label">Registros</div><div class="value">${rows.length}</div><div class="delta">meses × comunidad en este filtro</div></div>
     `;
 
@@ -1059,7 +1064,7 @@
     rows.sort((a,b)=> MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
     rows.forEach(r=>{
       const inter = r.likes+r.coment+r.share+r.saves;
-      const rate = r.alcance ? (inter/r.alcance*100) : 0;
+      const rate = r.alcance ? (inter/r.alcance) : 0;
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><span class="com-tag ${COM_COLORS[r.com]}"><span class="sw" style="background:var(--${COM_COLORS[r.com]})"></span>${r.com}</span></td>
@@ -1070,7 +1075,7 @@
         <td class="num">${r.saves.toLocaleString("es")}</td>
         <td class="num">${r.alcance.toLocaleString("es")}</td>
         <td class="num">${inter.toLocaleString("es")}</td>
-        <td class="num">${rate.toFixed(2)}%</td>
+        <td class="num">${rate.toFixed(3)}</td>
         <td><div class="row-actions"><button class="icon-btn danger del-eng" data-id="${r.id}" title="Eliminar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
         </button></div></td>`;
@@ -1131,7 +1136,9 @@
       mes: document.getElementById("foll-mes").value,
       anio: parseInt(document.getElementById("foll-anio").value,10),
       total: parseInt(document.getElementById("foll-total").value,10)||0,
-      tienda: parseInt(document.getElementById("foll-tienda").value,10)||0,
+      staff: parseInt(document.getElementById("foll-staff").value,10)||0,
+      hcTienda: parseInt(document.getElementById("foll-hc").value,10)||0,
+      alcanceHC: parseInt(document.getElementById("foll-alcance-hc").value,10)||0,
     });
     saveStore();
     closeOverlay("overlay-foll");
@@ -1156,8 +1163,9 @@
       const latest = comRows[comRows.length-1];
       const prev = comRows[comRows.length-2];
       const total = latest ? latest.total : 0;
-      const tienda = latest ? latest.tienda : 0;
-      const pct = total ? (tienda/total*100) : 0;
+      const hcTienda = latest ? latest.hcTienda : 0;
+      const alcanceHC = latest ? latest.alcanceHC : 0;
+      const pct = hcTienda ? (alcanceHC/hcTienda*100) : 0;
       const delta = (latest && prev) ? (latest.total - prev.total) : null;
       const colorClass = COM_COLORS[com];
       kpiHtml += `
@@ -1167,9 +1175,9 @@
           <div class="delta">${delta===null ? "Sin mes anterior para comparar" : (delta>=0?"+":"")+delta.toLocaleString("es")+" vs. mes anterior"}</div>
         </div>
         <div class="kpi-card">
-          <div class="label">${com} · Seguidores de tienda</div>
-          <div class="value">${tienda.toLocaleString("es")}</div>
-          <div class="delta">${pct.toFixed(1)}% del total</div>
+          <div class="label">${com} · % Seguidores tienda</div>
+          <div class="value">${pct.toFixed(1)}%</div>
+          <div class="delta">Alcance HC / HC Tienda</div>
         </div>`;
     });
     kpiWrap.innerHTML = kpiHtml;
@@ -1177,7 +1185,7 @@
     const tbody = document.getElementById("foll-table-body");
     tbody.innerHTML = "";
     rows.forEach((r,idx)=>{
-      const pct = r.total ? (r.tienda/r.total*100) : 0;
+      const pct = r.hcTienda ? (r.alcanceHC/r.hcTienda*100) : 0;
       // find previous month for same community for variation
       const sameCom = state.seguidores.filter(x=>x.com===r.com)
         .sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
@@ -1192,7 +1200,9 @@
         <td><span class="com-tag ${COM_COLORS[r.com]}"><span class="sw" style="background:var(--${COM_COLORS[r.com]})"></span>${r.com}</span></td>
         <td>${r.mes} ${r.anio}</td>
         <td class="num">${r.total.toLocaleString("es")}</td>
-        <td class="num">${r.tienda.toLocaleString("es")}</td>
+        <td class="num">${r.staff.toLocaleString("es")}</td>
+        <td class="num">${r.hcTienda.toLocaleString("es")}</td>
+        <td class="num">${r.alcanceHC.toLocaleString("es")}</td>
         <td class="num">${pct.toFixed(1)}%</td>
         <td class="num" style="color:${varColor}">${varStr}</td>
         <td><div class="row-actions"><button class="icon-btn danger del-foll" data-id="${r.id}" title="Eliminar">
