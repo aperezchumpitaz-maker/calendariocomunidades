@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Comunidades · TM SQUAD & ISACREW</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1115;
+    --surface:#171A21;
+    --surface-2:#1D212A;
+    --border:#2A2F3A;
+    --text:#E8E6E1;
+    --text-dim:#9A9FAC;
+    --text-faint:#5C6270;
+    /* TM SQUAD: naranja→rosa del anillo de su logo */
+    --tm:#FF5F40;
+    --tm-2:#E1306C;
+    --tm-grad:linear-gradient(135deg,#FF5F40,#E1306C);
+    --tm-dim:#3A1520;
+    /* ISACREW: amarillo vibrante + morado del logo */
+    --isa:#FFD000;
+    --isa-2:#833AB4;
+    --isa-grad:linear-gradient(135deg,#FFD000,#FCAF45);
+    --isa-dim:#2B2508;
+    --good:#3DDC97;
+    --warn:#FFC857;
+    --bad:#FF5C7A;
+    --radius:10px;
+    --radius-lg:16px;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--tm);color:#0F1115;}
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+
+  button{font-family:inherit;cursor:pointer;}
+  input,select,textarea{font-family:inherit;}
+
+  /* ---------- Shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns:236px 1fr;
+    min-height:100vh;
+  }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    background:var(--surface);
+    border-right:1px solid var(--border);
+    padding:24px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:28px;
+    position:sticky;
+    top:0;
+    height:100vh;
+  }
+  .brand{padding:0 8px;}
+  .brand .mark{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    color:var(--text);
+  }
+  .brand .mark .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:linear-gradient(135deg,#FF5F40,#E1306C 40%,#833AB4 70%,#FFD000);
+    flex-shrink:0;
+  }
+  .brand .sub{
+    font-size:11px;
+    color:var(--text-faint);
+    margin-top:4px;
+    padding-left:17px;
+  }
+
+  nav.tabs{display:flex;flex-direction:column;gap:4px;}
+  .tab-btn{
+    display:flex;align-items:center;gap:11px;
+    background:none;border:none;
+    color:var(--text-dim);
+    padding:11px 12px;
+    border-radius:var(--radius);
+    font-size:13.5px;font-weight:500;
+    text-align:left;
+    transition:background .15s, color .15s;
+  }
+  .tab-btn .ic{width:17px;height:17px;flex-shrink:0;opacity:.85;}
+  .tab-btn:hover{background:var(--surface-2);color:var(--text);}
+  .tab-btn.active{
+    background:var(--surface-2);
+    color:var(--text);
+    box-shadow:inset 2px 0 0 #FF5F40;
+  }
+
+  .sidebar-foot{
+    margin-top:auto;
+    padding:12px 8px;
+    border-top:1px solid var(--border);
+    font-size:11px;
+    color:var(--text-faint);
+    line-height:1.5;
+  }
+  .legend-mini{display:flex;gap:14px;margin-top:10px;}
+  .legend-mini span{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);}
+  .legend-mini .sw{width:8px;height:8px;border-radius:50%;}
+
+  /* ---------- Main ---------- */
+  main{padding:28px 36px 60px;max-width:1280px;}
+  .view{display:none;animation:fadein .25s ease;}
+  .view.active{display:block;}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  .view-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    margin-bottom:26px;gap:20px;flex-wrap:wrap;
+  }
+  .view-head h2{font-size:23px;font-weight:700;}
+  .view-head p{color:var(--text-dim);font-size:13.5px;margin-top:5px;max-width:480px;}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    background:var(--tm-grad);color:#fff;
+    border:none;padding:10px 16px;
+    border-radius:8px;font-size:13px;font-weight:600;
+    transition:transform .12s, filter .12s;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:active{transform:scale(.97);}
+  .btn.ghost{
+    background:var(--surface-2);color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn.ghost:hover{border-color:var(--text-faint);}
+  .btn svg{width:14px;height:14px;}
+
+  /* ---------- Calendar ---------- */
+  .cal-toolbar{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:18px;flex-wrap:wrap;gap:14px;
+  }
+  .cal-nav{display:flex;align-items:center;gap:14px;}
+  .cal-nav button{
+    width:32px;height:32px;border-radius:8px;
+    background:var(--surface-2);border:1px solid var(--border);
+    color:var(--text);display:flex;align-items:center;justify-content:center;
+  }
+  .cal-nav button:hover{border-color:var(--text-faint);}
+  .cal-nav h3{font-size:18px;min-width:170px;text-align:center;text-transform:capitalize;}
+
+  .cal-filters{display:flex;gap:8px;}
+  .chip-filter{
+    border:1px solid var(--border);background:var(--surface-2);
+    color:var(--text-dim);padding:7px 13px;border-radius:20px;
+    font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:6px;
+    transition:all .15s;
+  }
+  .chip-filter .sw{width:7px;height:7px;border-radius:50%;}
+  .chip-filter.on{color:var(--text);border-color:transparent;}
+  .chip-filter[data-com="TM SQUAD"].on{background:var(--tm-dim);box-shadow:inset 0 0 0 1px #FF5F40;color:#FFB59E;}
+  .chip-filter[data-com="ISACREW"].on{background:var(--isa-dim);box-shadow:inset 0 0 0 1px #FFD000;color:#E6C000;}
+
+  .cal-grid{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+  }
+  .cal-weekdays{
+    display:grid;grid-template-columns:repeat(7,1fr);
+    border-bottom:1px solid var(--border);
+  }
+  .cal-weekdays div{
+    padding:11px 0;text-align:center;
+    font-size:11px;font-weight:600;letter-spacing:.04em;
+    color:var(--text-faint);text-transform:uppercase;
+  }
+  .cal-days{display:grid;grid-template-columns:repeat(7,1fr);}
+  .cal-cell{
+    min-height:104px;
+    border-right:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+    padding:8px 7px;
+    position:relative;
+    cursor:pointer;
+    transition:background .12s;
+  }
+  .cal-cell:hover{background:var(--surface-2);}
+  .cal-cell:nth-child(7n){border-right:none;}
+  .cal-cell.empty{background:#0D0F13;cursor:default;}
+  .cal-cell.empty:hover{background:#0D0F13;}
+  .cal-cell .daynum{
+    font-size:12px;color:var(--text-faint);font-weight:500;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .cal-cell.today .daynum{
+    background:var(--tm-grad);color:#fff;
+    width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+  }
+  .cal-pills{margin-top:6px;display:flex;flex-direction:column;gap:3px;}
+  .cal-pill{
+    font-size:10.5px;padding:3px 6px;border-radius:5px;
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+    display:flex;align-items:center;gap:4px;font-weight:500;
+  }
+  .cal-pill .sw{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+  .cal-pill.tm{background:var(--tm-dim);color:#FFB59E;}
+  .cal-pill.isa{background:var(--isa-dim);color:#E6C000;}
+  .cal-more{font-size:10px;color:var(--text-faint);padding:2px 6px;}
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(8,9,11,.7);
+    backdrop-filter:blur(3px);
+    display:none;align-items:center;justify-content:center;
+    z-index:100;padding:20px;
+  }
+  .overlay.show{display:flex;}
+  .modal{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+    width:100%;max-width:480px;
+    max-height:88vh;overflow-y:auto;
+    padding:26px;
+    box-shadow:0 24px 60px rgba(0,0,0,.5);
+  }
+  .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+  .modal-head h3{font-size:17px;}
+  .modal-close{
+    background:none;border:none;color:var(--text-faint);
+    width:28px;height:28px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .modal-close:hover{background:var(--surface-2);color:var(--text);}
+
+  .field{margin-bottom:14px;}
+  .field label{
+    display:block;font-size:12px;font-weight:600;color:var(--text-dim);
+    margin-bottom:6px;
+  }
+  .field input,.field select,.field textarea{
+    width:100%;background:var(--surface-2);
+    border:1px solid var(--border);color:var(--text);
+    padding:10px 11px;border-radius:8px;font-size:13.5px;
+    transition:border-color .12s;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{
+    outline:none;border-color:#FF5F40;box-shadow:0 0 0 3px rgba(255,95,64,.15);
+  }
+  .field textarea{resize:vertical;min-height:64px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .modal-actions{display:flex;gap:10px;margin-top:20px;}
+  .modal-actions .btn{flex:1;justify-content:center;}
+
+  .day-events{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+  .day-event{
+    background:var(--surface-2);border:1px solid var(--border);
+    border-radius:8px;padding:11px 12px;font-size:13px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+  }
+  .day-event .meta{flex:1;}
+  .day-event .meta .top{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+  .day-event .meta .top .sw{width:7px;height:7px;border-radius:50%;}
+  .day-event .meta .title{font-weight:600;font-size:13px;}
+  .day-event .meta .sub{font-size:11.5px;color:var(--text-faint);margin-top:2px;}
+  .day-event .del{
+    background:none;border:none;color:var(--text-faint);
+    width:24px;height:24px;border-radius:6px;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .day-event .del:hover{background:rgba(255,92,122,.12);color:var(--bad);}
+  .empty-note{
+    color:var(--text-faint);font-size:12.5px;text-align:center;
+    padding:14px 0;
+  }
+
+  /* ---------- KPI cards ---------- */
+  .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+  .kpi-card{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);padding:18px 18px 16px;
+  }
+  .kpi-card .label{font-size:11.5px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
+  .kpi-card .value{
+    font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;
+    margin-top:8px;color:var(--text);
+  }
+  .kpi-card .value.tm{
+    background:var(--tm-grad);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .kpi-card .value.isa{color:#FFD000;}
+  .kpi-card .value.good{color:var(--good);}
+  .kpi-card .delta{font-size:11.5px;margin-top:6px;color:var(--text-dim);}
+
+  /* ---------- Panels ---------- */
+  .panel{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:20px;
+  }
+  .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+  .panel-head h3{font-size:14.5px;font-weight:600;color:var(--text);}
+
+  .filter-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .filter-row select{
+    background:var(--surface-2);border:1px solid var(--border);
+    color:var(--text);padding:8px 12px;border-radius:8px;font-size:12.5px;font-weight:500;
+  }
+
+  /* sparkline */
+  .spark-wrap{display:flex;align-items:flex-end;gap:4px;height:64px;margin-top:4px;}
+  .spark-bar{flex:1;border-radius:3px 3px 0 0;background:var(--isa-grad);min-height:2px;transition:height .3s ease;}
+  .spark-bar.tm{background:var(--tm-grad);}
+
+  table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  thead th{
+    text-align:left;color:var(--text-faint);font-weight:600;
+    font-size:11px;text-transform:uppercase;letter-spacing:.03em;
+    padding:8px 10px;border-bottom:1px solid var(--border);
+  }
+  tbody td{padding:10px 10px;border-bottom:1px solid var(--border);color:var(--text);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--surface-2);}
+  td.num,th.num{text-align:right;font-family:'JetBrains Mono',monospace;}
+  .com-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;
+  }
+  .com-tag.tm{background:var(--tm-dim);color:#FFB59E;}
+  .com-tag.isa{background:var(--isa-dim);color:#E6C000;}
+  .com-tag .sw{width:6px;height:6px;border-radius:50%;}
+  .row-actions{display:flex;gap:6px;justify-content:flex-end;}
+  .icon-btn{
+    background:none;border:none;color:var(--text-faint);
+    width:26px;height:26px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .icon-btn:hover{background:var(--surface-2);color:var(--text);}
+  .icon-btn.danger:hover{color:var(--bad);background:rgba(255,92,122,.1);}
+  .icon-btn svg{width:14px;height:14px;}
+
+  .table-empty{text-align:center;color:var(--text-faint);padding:30px 0;font-size:13px;}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr;}
+    .sidebar{
+      position:relative;height:auto;flex-direction:row;
+      align-items:center;padding:14px 16px;overflow-x:auto;
+    }
+    .sidebar-foot{display:none;}
+    nav.tabs{flex-direction:row;}
+    main{padding:20px;}
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .cal-cell{min-height:74px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="mark"><span class="dot"></span>Panel de Comunidades</div>
+      <div class="sub">TM SQUAD · ISACREW</div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" data-view="calendario">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+        Calendario
+      </button>
+      <button class="tab-btn" data-view="engagement">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l5-6 4 3 7-9"/><path d="M3 21h18"/></svg>
+        Engagement
+      </button>
+      <button class="tab-btn" data-view="seguidores">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M2.5 19c0-3.3 2.9-5.5 6.5-5.5s6.5 2.2 6.5 5.5"/><circle cx="17.5" cy="8.5" r="2.4"/><path d="M16 13.6c2.6.4 4.5 2.2 4.5 5"/></svg>
+        Seguidores
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      Todos los datos se guardan localmente en este navegador.
+      <div class="legend-mini">
+        <span><span class="sw" style="background:var(--tm)"></span>TM SQUAD</span>
+        <span><span class="sw" style="background:var(--isa)"></span>ISACREW</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main>
+
+    <!-- ===== VISTA: CALENDARIO ===== -->
+    <section class="view active" id="view-calendario">
+      <div class="view-head">
+        <div>
+          <h2>Calendario de contenido</h2>
+          <p>Publicaciones de Instagram para TM SQUAD e ISACREW. Haz clic en un día para ver el detalle o agregar una publicación.</p>
+        </div>
+        <button class="btn" id="btn-new-post">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Nueva publicación
+        </button>
+      </div>
+
+      <div class="cal-toolbar">
+        <div class="cal-nav">
+          <button id="cal-prev" aria-label="Mes anterior">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <h3 id="cal-month-label">Mes</h3>
+          <button id="cal-next" aria-label="Mes siguiente">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="cal-filters">
+          <button class="chip-filter on" data-com="TM SQUAD"><span class="sw" style="background:var(--tm)"></span>TM SQUAD</button>
+          <button class="chip-filter on" data-com="ISACREW"><span class="sw" style="background:var(--isa)"></span>ISACREW</button>
+        </div>
+      </div>
+
+      <div class="cal-grid">
+        <div class="cal-weekdays">
+          <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
+        </div>
+        <div class="cal-days" id="cal-days"></div>
+      </div>
+    </section>
+
+    <!-- ===== VISTA: ENGAGEMENT ===== -->
+    <section class="view" id="view-engagement">
+      <div class="view-head">
+        <div>
+          <h2>Interacción / Engagement mensual</h2>
+          <p>Registra likes, comentarios, compartidos, guardados y alcance por comunidad. Filtra por mes para ver el detalle y los totales.</p>
+        </div>
+        <button class="btn" id="btn-new-eng">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Registrar mes
+        </button>
+      </div>
+
+      <div class="kpi-row" id="eng-kpis"></div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Tendencia de interacciones — año en curso</h3>
+        </div>
+        <div class="spark-wrap" id="eng-sparkline"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Detalle por mes</h3>
+          <div class="filter-row">
+            <select id="eng-filter-mes"></select>
+            <select id="eng-filter-com">
+              <option value="todas">Todas las comunidades</option>
+              <option value="TM SQUAD">TM SQUAD</option>
+              <option value="ISACREW">ISACREW</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Comunidad</th><th>Mes</th>
+                <th class="num">Likes</th><th class="num">Coment.</th><th class="num">Compart.</th>
+                <th class="num">Guardados</th><th class="num">Alcance</th>
+                <th class="num">Interac. totales</th><th class="num">Engagement</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="eng-table-body"></tbody>
+          </table>
+          <div class="table-empty" id="eng-empty" style="display:none;">Aún no hay registros para este filtro. Usa "Registrar mes" para añadir uno.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VISTA: SEGUIDORES ===== -->
+    <section class="view" id="view-seguidores">
+      <div class="view-head">
+        <div>
+          <h2>Seguidores</h2>
+          <p>Lleva el control de seguidores totales y seguidores de tienda por comunidad, mes a mes.</p>
+        </div>
+        <button class="btn" id="btn-new-foll">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Registrar mes
+        </button>
+      </div>
+
+      <div class="kpi-row" id="foll-kpis"></div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Histórico de seguidores</h3>
+          <div class="filter-row">
+            <select id="foll-filter-com">
+              <option value="todas">Todas las comunidades</option>
+              <option value="TM SQUAD">TM SQUAD</option>
+              <option value="ISACREW">ISACREW</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Comunidad</th><th>Mes</th>
+                <th class="num">Seguidores totales</th><th class="num">Seguidores tienda</th>
+                <th class="num">% Tienda</th><th class="num">Variación</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="foll-table-body"></tbody>
+          </table>
+          <div class="table-empty" id="foll-empty" style="display:none;">Aún no hay registros. Usa "Registrar mes" para añadir uno.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ MODAL: día del calendario ============ -->
+<div class="overlay" id="overlay-day">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="day-modal-title">Día</h3>
+      <button class="modal-close" id="close-day-modal">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="day-events" id="day-events-list"></div>
+    <button class="btn ghost" id="btn-add-from-day" style="width:100%;justify-content:center;">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Agregar publicación este día
+    </button>
+  </div>
+</div>
+
+<!-- ============ MODAL: nueva/editar publicación ============ -->
+<div class="overlay" id="overlay-post">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="post-modal-title">Nueva publicación</h3>
+      <button class="modal-close" data-close="overlay-post">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <form id="form-post">
+      <input type="hidden" id="post-id">
+      <div class="field">
+        <label>Fecha de publicación</label>
+        <input type="date" id="post-fecha" required>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Comunidad</label>
+          <select id="post-com" required>
+            <option value="TM SQUAD">TM SQUAD</option>
+            <option value="ISACREW">ISACREW</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Formato</label>
+          <select id="post-formato">
+            <option>Reel</option><option>Post</option><option>Carrusel</option>
+            <option>Historia</option><option>Live</option><option>Video largo</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tipo de contenido</label>
+        <select id="post-tipo">
+          <option>Educativo</option><option>Promocional</option><option>Entretenimiento</option>
+          <option>Comunidad</option><option>Aviso/Anuncio</option><option>Evento</option>
+          <option>Testimonio</option><option>Detrás de cámaras</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tema / Título</label>
+        <input type="text" id="post-titulo" placeholder="Ej. Lanzamiento colección julio" required>
+      </div>
+      <div class="field">
+        <label>Descripción / Copy</label>
+        <textarea id="post-desc" placeholder="Detalle del contenido, copy o guion breve"></textarea>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Responsable</label>
+          <input type="text" id="post-resp" placeholder="Nombre">
+        </div>
+        <div class="field">
+          <label>Estado</label>
+          <select id="post-estado">
+            <option>Pendiente</option><option>En diseño</option><option>En revisión</option>
+            <option>Aprobado</option><option>Publicado</option><option>Cancelado</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close="overlay-post">Cancelar</button>
+        <button type="submit" class="btn">Guardar publicación</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: engagement ============ -->
+<div class="overlay" id="overlay-eng">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Registrar engagement del mes</h3>
+      <button class="modal-close" data-close="overlay-eng">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <form id="form-eng">
+      <div class="field-row">
+        <div class="field">
+          <label>Comunidad</label>
+          <select id="eng-com" required>
+            <option value="TM SQUAD">TM SQUAD</option>
+            <option value="ISACREW">ISACREW</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mes</label>
+          <select id="eng-mes" required></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Año</label>
+        <input type="number" id="eng-anio" value="2026" required>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Me gusta</label><input type="number" id="eng-likes" min="0" value="0" required></div>
+        <div class="field"><label>Comentarios</label><input type="number" id="eng-coment" min="0" value="0" required></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Compartidos</label><input type="number" id="eng-share" min="0" value="0" required></div>
+        <div class="field"><label>Guardados</label><input type="number" id="eng-saves" min="0" value="0" required></div>
+      </div>
+      <div class="field">
+        <label>Alcance (cuentas alcanzadas)</label>
+        <input type="number" id="eng-alcance" min="0" value="0" required>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close="overlay-eng">Cancelar</button>
+        <button type="submit" class="btn">Guardar registro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: seguidores ============ -->
+<div class="overlay" id="overlay-foll">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Registrar seguidores del mes</h3>
+      <button class="modal-close" data-close="overlay-foll">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <form id="form-foll">
+      <div class="field-row">
+        <div class="field">
+          <label>Comunidad</label>
+          <select id="foll-com" required>
+            <option value="TM SQUAD">TM SQUAD</option>
+            <option value="ISACREW">ISACREW</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Mes</label>
+          <select id="foll-mes" required></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Año</label>
+        <input type="number" id="foll-anio" value="2026" required>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Seguidores totales</label><input type="number" id="foll-total" min="0" required></div>
+        <div class="field"><label>Seguidores de tienda</label><input type="number" id="foll-tienda" min="0" required></div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" data-close="overlay-foll">Cancelar</button>
+        <button type="submit" class="btn">Guardar registro</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  const COM_COLORS = { "TM SQUAD":"tm", "ISACREW":"isa" };
+
+  /* ---------------- Storage ---------------- */
+  const STORE_KEY = "panel_comunidades_v1";
+  function loadStore(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(raw) return JSON.parse(raw);
+    }catch(e){}
+    return seedData();
+  }
+  function saveStore(){
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  }
+
+  function seedData(){
+    const today = new Date();
+    const y = today.getFullYear();
+    const pad = n => String(n).padStart(2,"0");
+    const d = (yy,mm,dd) => `${yy}-${pad(mm)}-${pad(dd)}`;
+    return {
+      posts:[
+        {id:cryptoId(), fecha:d(y, today.getMonth()+1, 3), com:"TM SQUAD", formato:"Reel", tipo:"Promocional", titulo:"Lanzamiento línea invierno", desc:"Reel mostrando los nuevos diseños de la colección.", resp:"Camila R.", estado:"Aprobado"},
+        {id:cryptoId(), fecha:d(y, today.getMonth()+1, 8), com:"ISACREW", formato:"Carrusel", tipo:"Educativo", titulo:"Tips de cuidado de prendas", desc:"Carrusel de 5 slides con consejos de lavado.", resp:"Jorge P.", estado:"En diseño"},
+        {id:cryptoId(), fecha:d(y, today.getMonth()+1, 14), com:"TM SQUAD", formato:"Historia", tipo:"Comunidad", titulo:"Encuesta: color favorito", desc:"Sticker de encuesta en historias.", resp:"Camila R.", estado:"Publicado"},
+        {id:cryptoId(), fecha:d(y, today.getMonth()+1, 21), com:"ISACREW", formato:"Post", tipo:"Testimonio", titulo:"Reseña de clienta", desc:"Post con foto y testimonio real.", resp:"Jorge P.", estado:"Pendiente"},
+      ],
+      engagement:[
+        {id:cryptoId(), com:"TM SQUAD", mes:MESES[today.getMonth()], anio:y, likes:1450, coment:120, share:60, saves:90, alcance:9800},
+        {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, likes:980, coment:75, share:40, saves:55, alcance:6200},
+      ],
+      seguidores:[
+        {id:cryptoId(), com:"TM SQUAD", mes:MESES[today.getMonth()], anio:y, total:24500, tienda:3100},
+        {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, total:15800, tienda:2050},
+      ]
+    };
+  }
+  function cryptoId(){
+    return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  }
+
+  let state = loadStore();
+
+  /* ---------------- Tabs ---------------- */
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const views = document.querySelectorAll(".view");
+  tabBtns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      tabBtns.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const target = btn.dataset.view;
+      views.forEach(v=> v.classList.toggle("active", v.id === "view-"+target));
+    });
+  });
+
+  /* ---------------- Overlays ---------------- */
+  function openOverlay(id){ document.getElementById(id).classList.add("show"); }
+  function closeOverlay(id){ document.getElementById(id).classList.remove("show"); }
+  document.querySelectorAll("[data-close]").forEach(el=>{
+    el.addEventListener("click", ()=> closeOverlay(el.dataset.close));
+  });
+  document.querySelectorAll(".overlay").forEach(ov=>{
+    ov.addEventListener("click", e=>{ if(e.target === ov) ov.classList.remove("show"); });
+  });
+  document.addEventListener("keydown", e=>{
+    if(e.key === "Escape") document.querySelectorAll(".overlay.show").forEach(o=>o.classList.remove("show"));
+  });
+
+  /* =========================================================
+     CALENDARIO
+  ========================================================= */
+  let calYear, calMonth; // calMonth: 0-11
+  (function initCalDate(){
+    const t = new Date();
+    calYear = t.getFullYear();
+    calMonth = t.getMonth();
+  })();
+
+  const activeFilters = new Set(["TM SQUAD","ISACREW"]);
+  document.querySelectorAll(".chip-filter").forEach(chip=>{
+    chip.addEventListener("click", ()=>{
+      const com = chip.dataset.com;
+      if(activeFilters.has(com)){
+        if(activeFilters.size === 1) return; // keep at least one
+        activeFilters.delete(com);
+        chip.classList.remove("on");
+      } else {
+        activeFilters.add(com);
+        chip.classList.add("on");
+      }
+      renderCalendar();
+    });
+  });
+
+  document.getElementById("cal-prev").addEventListener("click", ()=>{
+    calMonth--; if(calMonth<0){calMonth=11; calYear--;}
+    renderCalendar();
+  });
+  document.getElementById("cal-next").addEventListener("click", ()=>{
+    calMonth++; if(calMonth>11){calMonth=0; calYear++;}
+    renderCalendar();
+  });
+
+  function fmtDateISO(y,m,d){
+    return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+  }
+
+  function renderCalendar(){
+    document.getElementById("cal-month-label").textContent = `${MESES[calMonth]} ${calYear}`;
+    const grid = document.getElementById("cal-days");
+    grid.innerHTML = "";
+
+    const firstDay = new Date(calYear, calMonth, 1);
+    let startOffset = firstDay.getDay() - 1; // Monday-first
+    if(startOffset < 0) startOffset = 6;
+    const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+    const todayISO = new Date().toISOString().slice(0,10);
+
+    for(let i=0;i<startOffset;i++){
+      const cell = document.createElement("div");
+      cell.className = "cal-cell empty";
+      grid.appendChild(cell);
+    }
+
+    for(let day=1; day<=daysInMonth; day++){
+      const iso = fmtDateISO(calYear, calMonth, day);
+      const cell = document.createElement("div");
+      cell.className = "cal-cell" + (iso === todayISO ? " today" : "");
+      cell.dataset.date = iso;
+
+      const num = document.createElement("div");
+      num.className = "daynum";
+      num.textContent = day;
+      cell.appendChild(num);
+
+      const dayPosts = state.posts.filter(p => p.fecha === iso && activeFilters.has(p.com));
+      if(dayPosts.length){
+        const pillsWrap = document.createElement("div");
+        pillsWrap.className = "cal-pills";
+        dayPosts.slice(0,3).forEach(p=>{
+          const pill = document.createElement("div");
+          pill.className = "cal-pill " + COM_COLORS[p.com];
+          pill.innerHTML = `<span class="sw" style="background:var(--${COM_COLORS[p.com]})"></span>${escapeHtml(p.titulo)}`;
+          pillsWrap.appendChild(pill);
+        });
+        cell.appendChild(pillsWrap);
+        if(dayPosts.length > 3){
+          const more = document.createElement("div");
+          more.className = "cal-more";
+          more.textContent = `+${dayPosts.length-3} más`;
+          cell.appendChild(more);
+        }
+      }
+
+      cell.addEventListener("click", ()=> openDayModal(iso));
+      grid.appendChild(cell);
+    }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---- Day modal ---- */
+  let currentDayISO = null;
+  function openDayModal(iso){
+    currentDayISO = iso;
+    const d = new Date(iso + "T00:00:00");
+    const label = d.toLocaleDateString("es-ES",{ day:"numeric", month:"long", year:"numeric" });
+    document.getElementById("day-modal-title").textContent = label.charAt(0).toUpperCase()+label.slice(1);
+
+    const list = document.getElementById("day-events-list");
+    list.innerHTML = "";
+    const dayPosts = state.posts.filter(p=>p.fecha === iso);
+
+    if(!dayPosts.length){
+      list.innerHTML = `<div class="empty-note">No hay publicaciones programadas este día.</div>`;
+    } else {
+      dayPosts.forEach(p=>{
+        const row = document.createElement("div");
+        row.className = "day-event";
+        row.innerHTML = `
+          <div class="meta">
+            <div class="top"><span class="sw" style="background:var(--${COM_COLORS[p.com]})"></span>
+              <span class="title">${escapeHtml(p.titulo)}</span></div>
+            <div class="sub">${escapeHtml(p.com)} · ${escapeHtml(p.formato)} · ${escapeHtml(p.estado)}</div>
+          </div>
+          <button class="icon-btn edit" title="Editar" data-id="${p.id}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="del" title="Eliminar" data-id="${p.id}">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+          </button>`;
+        list.appendChild(row);
+      });
+    }
+    openOverlay("overlay-day");
+  }
+
+  document.getElementById("day-events-list").addEventListener("click", e=>{
+    const editBtn = e.target.closest(".edit");
+    const delBtn = e.target.closest(".del");
+    if(editBtn){
+      const post = state.posts.find(p=>p.id === editBtn.dataset.id);
+      closeOverlay("overlay-day");
+      openPostModal(post);
+    } else if(delBtn){
+      if(confirm("¿Eliminar esta publicación?")){
+        state.posts = state.posts.filter(p=>p.id !== delBtn.dataset.id);
+        saveStore();
+        openDayModal(currentDayISO);
+        renderCalendar();
+      }
+    }
+  });
+
+  document.getElementById("close-day-modal").addEventListener("click", ()=>closeOverlay("overlay-day"));
+
+  document.getElementById("btn-add-from-day").addEventListener("click", ()=>{
+    closeOverlay("overlay-day");
+    openPostModal(null, currentDayISO);
+  });
+  document.getElementById("btn-new-post").addEventListener("click", ()=> openPostModal(null));
+
+  /* ---- Post form ---- */
+  function openPostModal(post, presetDate){
+    document.getElementById("post-modal-title").textContent = post ? "Editar publicación" : "Nueva publicación";
+    document.getElementById("post-id").value = post ? post.id : "";
+    document.getElementById("post-fecha").value = post ? post.fecha : (presetDate || new Date().toISOString().slice(0,10));
+    document.getElementById("post-com").value = post ? post.com : "TM SQUAD";
+    document.getElementById("post-formato").value = post ? post.formato : "Reel";
+    document.getElementById("post-tipo").value = post ? post.tipo : "Educativo";
+    document.getElementById("post-titulo").value = post ? post.titulo : "";
+    document.getElementById("post-desc").value = post ? post.desc : "";
+    document.getElementById("post-resp").value = post ? post.resp : "";
+    document.getElementById("post-estado").value = post ? post.estado : "Pendiente";
+    openOverlay("overlay-post");
+  }
+
+  document.getElementById("form-post").addEventListener("submit", e=>{
+    e.preventDefault();
+    const id = document.getElementById("post-id").value;
+    const data = {
+      fecha: document.getElementById("post-fecha").value,
+      com: document.getElementById("post-com").value,
+      formato: document.getElementById("post-formato").value,
+      tipo: document.getElementById("post-tipo").value,
+      titulo: document.getElementById("post-titulo").value.trim(),
+      desc: document.getElementById("post-desc").value.trim(),
+      resp: document.getElementById("post-resp").value.trim(),
+      estado: document.getElementById("post-estado").value,
+    };
+    if(id){
+      const idx = state.posts.findIndex(p=>p.id===id);
+      state.posts[idx] = {...state.posts[idx], ...data};
+    } else {
+      state.posts.push({id:cryptoId(), ...data});
+    }
+    saveStore();
+    closeOverlay("overlay-post");
+    renderCalendar();
+  });
+
+  /* =========================================================
+     ENGAGEMENT
+  ========================================================= */
+  const engMesSelect = document.getElementById("eng-mes");
+  const engFilterMes = document.getElementById("eng-filter-mes");
+  MESES.forEach(m=>{
+    engMesSelect.add(new Option(m,m));
+    engFilterMes.add(new Option(m,m));
+  });
+  engFilterMes.insertBefore(new Option("Todos los meses","todos"), engFilterMes.firstChild);
+  engFilterMes.value = "todos";
+  engMesSelect.value = MESES[new Date().getMonth()];
+
+  document.getElementById("btn-new-eng").addEventListener("click", ()=>{
+    document.getElementById("form-eng").reset();
+    document.getElementById("eng-mes").value = MESES[new Date().getMonth()];
+    document.getElementById("eng-anio").value = new Date().getFullYear();
+    openOverlay("overlay-eng");
+  });
+
+  document.getElementById("form-eng").addEventListener("submit", e=>{
+    e.preventDefault();
+    state.engagement.push({
+      id: cryptoId(),
+      com: document.getElementById("eng-com").value,
+      mes: document.getElementById("eng-mes").value,
+      anio: parseInt(document.getElementById("eng-anio").value,10),
+      likes: parseInt(document.getElementById("eng-likes").value,10)||0,
+      coment: parseInt(document.getElementById("eng-coment").value,10)||0,
+      share: parseInt(document.getElementById("eng-share").value,10)||0,
+      saves: parseInt(document.getElementById("eng-saves").value,10)||0,
+      alcance: parseInt(document.getElementById("eng-alcance").value,10)||0,
+    });
+    saveStore();
+    closeOverlay("overlay-eng");
+    renderEngagement();
+  });
+
+  engFilterMes.addEventListener("change", renderEngagement);
+  document.getElementById("eng-filter-com").addEventListener("change", renderEngagement);
+
+  function renderEngagement(){
+    const filterMes = engFilterMes.value;
+    const filterCom = document.getElementById("eng-filter-com").value;
+
+    let rows = state.engagement.slice();
+    if(filterMes !== "todos") rows = rows.filter(r=>r.mes === filterMes);
+    if(filterCom !== "todas") rows = rows.filter(r=>r.com === filterCom);
+
+    // KPIs over filtered rows
+    const sum = key => rows.reduce((a,r)=>a+r[key],0);
+    const totalInter = sum("likes")+sum("coment")+sum("share")+sum("saves");
+    const totalAlcance = sum("alcance");
+    const engRate = totalAlcance ? (totalInter/totalAlcance*100) : 0;
+
+    const kpiWrap = document.getElementById("eng-kpis");
+    kpiWrap.innerHTML = `
+      <div class="kpi-card"><div class="label">Interacciones totales</div><div class="value">${totalInter.toLocaleString("es")}</div><div class="delta">likes + comentarios + compartidos + guardados</div></div>
+      <div class="kpi-card"><div class="label">Alcance acumulado</div><div class="value">${totalAlcance.toLocaleString("es")}</div><div class="delta">cuentas alcanzadas en el filtro actual</div></div>
+      <div class="kpi-card"><div class="label">Tasa de engagement</div><div class="value good">${engRate.toFixed(2)}%</div><div class="delta">interacciones / alcance</div></div>
+      <div class="kpi-card"><div class="label">Registros</div><div class="value">${rows.length}</div><div class="delta">meses × comunidad en este filtro</div></div>
+    `;
+
+    // table
+    const tbody = document.getElementById("eng-table-body");
+    tbody.innerHTML = "";
+    rows.sort((a,b)=> MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+    rows.forEach(r=>{
+      const inter = r.likes+r.coment+r.share+r.saves;
+      const rate = r.alcance ? (inter/r.alcance*100) : 0;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span class="com-tag ${COM_COLORS[r.com]}"><span class="sw" style="background:var(--${COM_COLORS[r.com]})"></span>${r.com}</span></td>
+        <td>${r.mes} ${r.anio}</td>
+        <td class="num">${r.likes.toLocaleString("es")}</td>
+        <td class="num">${r.coment.toLocaleString("es")}</td>
+        <td class="num">${r.share.toLocaleString("es")}</td>
+        <td class="num">${r.saves.toLocaleString("es")}</td>
+        <td class="num">${r.alcance.toLocaleString("es")}</td>
+        <td class="num">${inter.toLocaleString("es")}</td>
+        <td class="num">${rate.toFixed(2)}%</td>
+        <td><div class="row-actions"><button class="icon-btn danger del-eng" data-id="${r.id}" title="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+        </button></div></td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById("eng-empty").style.display = rows.length ? "none" : "block";
+
+    renderSparkline();
+  }
+
+  document.getElementById("eng-table-body").addEventListener("click", e=>{
+    const btn = e.target.closest(".del-eng");
+    if(!btn) return;
+    if(confirm("¿Eliminar este registro de engagement?")){
+      state.engagement = state.engagement.filter(r=>r.id !== btn.dataset.id);
+      saveStore();
+      renderEngagement();
+    }
+  });
+
+  function renderSparkline(){
+    const year = new Date().getFullYear();
+    const totalsByMonth = MESES.map(m=>{
+      const rows = state.engagement.filter(r=>r.mes===m && r.anio===year);
+      return rows.reduce((a,r)=>a + r.likes+r.coment+r.share+r.saves, 0);
+    });
+    const max = Math.max(...totalsByMonth, 1);
+    const wrap = document.getElementById("eng-sparkline");
+    wrap.innerHTML = "";
+    totalsByMonth.forEach((val, i)=>{
+      const bar = document.createElement("div");
+      bar.className = "spark-bar" + (i % 2 === 0 ? "" : "");
+      bar.style.height = Math.max(2, (val/max*100)) + "%";
+      bar.title = `${MESES[i]}: ${val.toLocaleString("es")} interacciones`;
+      wrap.appendChild(bar);
+    });
+  }
+
+  /* =========================================================
+     SEGUIDORES
+  ========================================================= */
+  const follMesSelect = document.getElementById("foll-mes");
+  MESES.forEach(m=> follMesSelect.add(new Option(m,m)));
+  follMesSelect.value = MESES[new Date().getMonth()];
+
+  document.getElementById("btn-new-foll").addEventListener("click", ()=>{
+    document.getElementById("form-foll").reset();
+    document.getElementById("foll-mes").value = MESES[new Date().getMonth()];
+    document.getElementById("foll-anio").value = new Date().getFullYear();
+    openOverlay("overlay-foll");
+  });
+
+  document.getElementById("form-foll").addEventListener("submit", e=>{
+    e.preventDefault();
+    state.seguidores.push({
+      id: cryptoId(),
+      com: document.getElementById("foll-com").value,
+      mes: document.getElementById("foll-mes").value,
+      anio: parseInt(document.getElementById("foll-anio").value,10),
+      total: parseInt(document.getElementById("foll-total").value,10)||0,
+      tienda: parseInt(document.getElementById("foll-tienda").value,10)||0,
+    });
+    saveStore();
+    closeOverlay("overlay-foll");
+    renderSeguidores();
+  });
+
+  document.getElementById("foll-filter-com").addEventListener("change", renderSeguidores);
+
+  function renderSeguidores(){
+    const filterCom = document.getElementById("foll-filter-com").value;
+    let rows = state.seguidores.slice();
+    if(filterCom !== "todas") rows = rows.filter(r=>r.com===filterCom);
+    rows.sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+
+    // KPI: latest record per community
+    const kpiWrap = document.getElementById("foll-kpis");
+    const communities = filterCom === "todas" ? ["TM SQUAD","ISACREW"] : [filterCom];
+    let kpiHtml = "";
+    communities.forEach(com=>{
+      const comRows = state.seguidores.filter(r=>r.com===com)
+        .sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+      const latest = comRows[comRows.length-1];
+      const prev = comRows[comRows.length-2];
+      const total = latest ? latest.total : 0;
+      const tienda = latest ? latest.tienda : 0;
+      const pct = total ? (tienda/total*100) : 0;
+      const delta = (latest && prev) ? (latest.total - prev.total) : null;
+      const colorClass = COM_COLORS[com];
+      kpiHtml += `
+        <div class="kpi-card">
+          <div class="label">${com} · Seguidores totales</div>
+          <div class="value ${colorClass}">${total.toLocaleString("es")}</div>
+          <div class="delta">${delta===null ? "Sin mes anterior para comparar" : (delta>=0?"+":"")+delta.toLocaleString("es")+" vs. mes anterior"}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="label">${com} · Seguidores de tienda</div>
+          <div class="value">${tienda.toLocaleString("es")}</div>
+          <div class="delta">${pct.toFixed(1)}% del total</div>
+        </div>`;
+    });
+    kpiWrap.innerHTML = kpiHtml;
+
+    const tbody = document.getElementById("foll-table-body");
+    tbody.innerHTML = "";
+    rows.forEach((r,idx)=>{
+      const pct = r.total ? (r.tienda/r.total*100) : 0;
+      // find previous month for same community for variation
+      const sameCom = state.seguidores.filter(x=>x.com===r.com)
+        .sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+      const posInCom = sameCom.findIndex(x=>x.id===r.id);
+      const prev = posInCom > 0 ? sameCom[posInCom-1] : null;
+      const variation = prev ? r.total - prev.total : null;
+      const varStr = variation===null ? "—" : (variation>=0?"+":"")+variation.toLocaleString("es");
+      const varColor = variation===null ? "var(--text-faint)" : (variation>=0 ? "var(--good)" : "var(--bad)");
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span class="com-tag ${COM_COLORS[r.com]}"><span class="sw" style="background:var(--${COM_COLORS[r.com]})"></span>${r.com}</span></td>
+        <td>${r.mes} ${r.anio}</td>
+        <td class="num">${r.total.toLocaleString("es")}</td>
+        <td class="num">${r.tienda.toLocaleString("es")}</td>
+        <td class="num">${pct.toFixed(1)}%</td>
+        <td class="num" style="color:${varColor}">${varStr}</td>
+        <td><div class="row-actions"><button class="icon-btn danger del-foll" data-id="${r.id}" title="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
+        </button></div></td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById("foll-empty").style.display = rows.length ? "none" : "block";
+  }
+
+  document.getElementById("foll-table-body").addEventListener("click", e=>{
+    const btn = e.target.closest(".del-foll");
+    if(!btn) return;
+    if(confirm("¿Eliminar este registro de seguidores?")){
+      state.seguidores = state.seguidores.filter(r=>r.id !== btn.dataset.id);
+      saveStore();
+      renderSeguidores();
+    }
+  });
+
+  /* ---------------- Init ---------------- */
+  renderCalendar();
+  renderEngagement();
+  renderSeguidores();
+
+})();
+</script>
+</body>
+</html>
