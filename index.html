@@ -8,26 +8,33 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0F1115;
-    --surface:#171A21;
-    --surface-2:#1D212A;
-    --border:#2A2F3A;
-    --text:#E8E6E1;
-    --text-dim:#9A9FAC;
-    --text-faint:#5C6270;
+    --bg:#F4F5F8;
+    --surface:#FFFFFF;
+    --surface-2:#F1F3F6;
+    --border:#E2E5EB;
+    --text:#1B1E25;
+    --text-dim:#565C69;
+    --text-faint:#868C98;
+    --shadow:0 1px 2px rgba(20,24,32,.04),0 2px 8px rgba(20,24,32,.04);
     /* TM SQUAD: naranja→rosa del anillo de su logo */
     --tm:#FF5F40;
     --tm-2:#E1306C;
     --tm-grad:linear-gradient(135deg,#FF5F40,#E1306C);
-    --tm-dim:#3A1520;
+    --tm-dim:#FFEAE4;
+    --tm-ink:#C23A1E;
     /* ISACREW: amarillo vibrante + morado del logo */
     --isa:#FFD000;
     --isa-2:#833AB4;
     --isa-grad:linear-gradient(135deg,#FFD000,#FCAF45);
-    --isa-dim:#2B2508;
-    --good:#3DDC97;
-    --warn:#FFC857;
-    --bad:#FF5C7A;
+    --isa-dim:#FFF5C7;
+    --isa-ink:#8A6A00;
+    /* Colaboración: contenido dirigido a ambas comunidades */
+    --colab:linear-gradient(135deg,#FF5F40,#FFD000);
+    --colab-dim:#F3EAFA;
+    --colab-ink:#6B2C96;
+    --good:#1E9E6A;
+    --warn:#C98A00;
+    --bad:#D93A5B;
     --radius:10px;
     --radius-lg:16px;
   }
@@ -41,7 +48,7 @@
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
   }
-  ::selection{background:var(--tm);color:#0F1115;}
+  ::selection{background:#FFD3C7;color:var(--text);}
   ::-webkit-scrollbar{width:10px;height:10px;}
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
@@ -107,8 +114,8 @@
   .tab-btn .ic{width:17px;height:17px;flex-shrink:0;opacity:.85;}
   .tab-btn:hover{background:var(--surface-2);color:var(--text);}
   .tab-btn.active{
-    background:var(--surface-2);
-    color:var(--text);
+    background:var(--tm-dim);
+    color:var(--tm-ink);font-weight:600;
     box-shadow:inset 2px 0 0 #FF5F40;
   }
 
@@ -176,14 +183,16 @@
   }
   .chip-filter .sw{width:7px;height:7px;border-radius:50%;}
   .chip-filter.on{color:var(--text);border-color:transparent;}
-  .chip-filter[data-com="TM SQUAD"].on{background:var(--tm-dim);box-shadow:inset 0 0 0 1px #FF5F40;color:#FFB59E;}
-  .chip-filter[data-com="ISACREW"].on{background:var(--isa-dim);box-shadow:inset 0 0 0 1px #FFD000;color:#E6C000;}
+  .chip-filter[data-com="TM SQUAD"].on{background:var(--tm-dim);box-shadow:inset 0 0 0 1px #FF5F40;color:var(--tm-ink);}
+  .chip-filter[data-com="ISACREW"].on{background:var(--isa-dim);box-shadow:inset 0 0 0 1px #E6BB00;color:var(--isa-ink);}
+  .chip-filter[data-com="Colaboración"].on{background:var(--colab-dim);box-shadow:inset 0 0 0 1px #B98AD6;color:var(--colab-ink);}
 
   .cal-grid{
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:var(--radius-lg);
     overflow:hidden;
+    box-shadow:var(--shadow);
   }
   .cal-weekdays{
     display:grid;grid-template-columns:repeat(7,1fr);
@@ -206,8 +215,8 @@
   }
   .cal-cell:hover{background:var(--surface-2);}
   .cal-cell:nth-child(7n){border-right:none;}
-  .cal-cell.empty{background:#0D0F13;cursor:default;}
-  .cal-cell.empty:hover{background:#0D0F13;}
+  .cal-cell.empty{background:#F8F9FB;cursor:default;}
+  .cal-cell.empty:hover{background:#F8F9FB;}
   .cal-cell .daynum{
     font-size:12px;color:var(--text-faint);font-weight:500;
     font-family:'JetBrains Mono',monospace;
@@ -225,13 +234,14 @@
     display:flex;align-items:center;gap:4px;font-weight:500;
   }
   .cal-pill .sw{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-  .cal-pill.tm{background:var(--tm-dim);color:#FFB59E;}
-  .cal-pill.isa{background:var(--isa-dim);color:#E6C000;}
+  .cal-pill.tm{background:var(--tm-dim);color:var(--tm-ink);}
+  .cal-pill.isa{background:var(--isa-dim);color:var(--isa-ink);}
+  .cal-pill.colab{background:var(--colab-dim);color:var(--colab-ink);}
   .cal-more{font-size:10px;color:var(--text-faint);padding:2px 6px;}
 
   /* ---------- Modal ---------- */
   .overlay{
-    position:fixed;inset:0;background:rgba(8,9,11,.7);
+    position:fixed;inset:0;background:rgba(20,24,32,.35);
     backdrop-filter:blur(3px);
     display:none;align-items:center;justify-content:center;
     z-index:100;padding:20px;
@@ -243,7 +253,7 @@
     width:100%;max-width:480px;
     max-height:88vh;overflow-y:auto;
     padding:26px;
-    box-shadow:0 24px 60px rgba(0,0,0,.5);
+    box-shadow:0 24px 60px rgba(20,24,32,.18);
   }
   .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
   .modal-head h3{font-size:17px;}
@@ -269,6 +279,8 @@
     outline:none;border-color:#FF5F40;box-shadow:0 0 0 3px rgba(255,95,64,.15);
   }
   .field textarea{resize:vertical;min-height:64px;}
+  .field .hint{font-size:11px;color:var(--text-faint);margin-top:5px;line-height:1.4;}
+  .field-section{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-faint);margin:18px 0 10px;padding-top:14px;border-top:1px solid var(--border);}
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
   .modal-actions{display:flex;gap:10px;margin-top:20px;}
@@ -290,7 +302,7 @@
     width:24px;height:24px;border-radius:6px;flex-shrink:0;
     display:flex;align-items:center;justify-content:center;
   }
-  .day-event .del:hover{background:rgba(255,92,122,.12);color:var(--bad);}
+  .day-event .del:hover{background:rgba(217,58,91,.1);color:var(--bad);}
   .empty-note{
     color:var(--text-faint);font-size:12.5px;text-align:center;
     padding:14px 0;
@@ -301,6 +313,7 @@
   .kpi-card{
     background:var(--surface);border:1px solid var(--border);
     border-radius:var(--radius-lg);padding:18px 18px 16px;
+    box-shadow:var(--shadow);
   }
   .kpi-card .label{font-size:11.5px;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
   .kpi-card .value{
@@ -312,7 +325,9 @@
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     background-clip:text;
   }
-  .kpi-card .value.isa{color:#FFD000;}
+  .kpi-card .value.isa{color:var(--isa-ink);}
+  .kpi-card .value.nodata,.nodata{color:var(--text-faint);font-weight:500;}
+  .kpi-card .value.nodata{font-size:18px;font-family:'Inter',sans-serif;}
   .kpi-card .value.good{color:var(--good);}
   .kpi-card .delta{font-size:11.5px;margin-top:6px;color:var(--text-dim);}
 
@@ -320,6 +335,7 @@
   .panel{
     background:var(--surface);border:1px solid var(--border);
     border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:20px;
+    box-shadow:var(--shadow);
   }
   .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
   .panel-head h3{font-size:14.5px;font-weight:600;color:var(--text);}
@@ -349,8 +365,9 @@
     display:inline-flex;align-items:center;gap:6px;
     font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:20px;
   }
-  .com-tag.tm{background:var(--tm-dim);color:#FFB59E;}
-  .com-tag.isa{background:var(--isa-dim);color:#E6C000;}
+  .com-tag.tm{background:var(--tm-dim);color:var(--tm-ink);}
+  .com-tag.isa{background:var(--isa-dim);color:var(--isa-ink);}
+  .com-tag.colab{background:var(--colab-dim);color:var(--colab-ink);}
   .com-tag .sw{width:6px;height:6px;border-radius:50%;}
   .row-actions{display:flex;gap:6px;justify-content:flex-end;}
   .icon-btn{
@@ -359,8 +376,12 @@
     display:flex;align-items:center;justify-content:center;
   }
   .icon-btn:hover{background:var(--surface-2);color:var(--text);}
-  .icon-btn.danger:hover{color:var(--bad);background:rgba(255,92,122,.1);}
+  .icon-btn.danger:hover{color:var(--bad);background:rgba(217,58,91,.1);}
   .icon-btn svg{width:14px;height:14px;}
+
+  .cal-summary{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;}
+  .cal-summary .com-tag{font-weight:500;}
+  .cal-summary .com-tag b{font-family:'JetBrains Mono',monospace;}
 
   .table-empty{text-align:center;color:var(--text-faint);padding:30px 0;font-size:13px;}
 
@@ -409,6 +430,7 @@
       <div class="legend-mini">
         <span><span class="sw" style="background:var(--tm)"></span>TM SQUAD</span>
         <span><span class="sw" style="background:var(--isa)"></span>ISACREW</span>
+        <span><span class="sw" style="background:var(--colab)"></span>Colab.</span>
       </div>
     </div>
   </aside>
@@ -421,7 +443,7 @@
       <div class="view-head">
         <div>
           <h2>Calendario de contenido</h2>
-          <p>Publicaciones de Instagram para TM SQUAD e ISACREW. Haz clic en un día para ver el detalle o agregar una publicación.</p>
+          <p>Publicaciones de Instagram para TM SQUAD, ISACREW y colaboraciones entre ambas. Haz clic en un día para ver el detalle o agregar una publicación.</p>
         </div>
         <button class="btn" id="btn-new-post">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -442,6 +464,7 @@
         <div class="cal-filters">
           <button class="chip-filter on" data-com="TM SQUAD"><span class="sw" style="background:var(--tm)"></span>TM SQUAD</button>
           <button class="chip-filter on" data-com="ISACREW"><span class="sw" style="background:var(--isa)"></span>ISACREW</button>
+          <button class="chip-filter on" data-com="Colaboración"><span class="sw" style="background:var(--colab)"></span>Colaboración</button>
         </div>
       </div>
 
@@ -451,6 +474,7 @@
         </div>
         <div class="cal-days" id="cal-days"></div>
       </div>
+      <div class="cal-summary" id="cal-summary"></div>
     </section>
 
     <!-- ===== VISTA: ENGAGEMENT ===== -->
@@ -458,7 +482,7 @@
       <div class="view-head">
         <div>
           <h2>Interacción / Engagement mensual</h2>
-          <p>Registra likes, comentarios, compartidos, guardados y alcance por comunidad. Filtra por mes para ver el detalle y los totales.</p>
+          <p>Registra likes, comentarios, compartidos, guardados y alcance por comunidad. Engagement = interacciones totales / seguidores de la página.</p>
         </div>
         <button class="btn" id="btn-new-eng">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -494,7 +518,7 @@
                 <th>Comunidad</th><th>Mes</th>
                 <th class="num">Likes</th><th class="num">Coment.</th><th class="num">Compart.</th>
                 <th class="num">Guardados</th><th class="num">Alcance</th>
-                <th class="num">Interac. totales</th><th class="num">Engagement</th><th></th>
+                <th class="num">Interac. totales</th><th class="num">Seguidores página</th><th class="num">Engagement</th><th></th>
               </tr>
             </thead>
             <tbody id="eng-table-body"></tbody>
@@ -509,7 +533,7 @@
       <div class="view-head">
         <div>
           <h2>Seguidores</h2>
-          <p>Lleva el control de seguidores totales y seguidores de tienda por comunidad, mes a mes.</p>
+          <p>Seguidores (%) = personal de tienda que sigue la página / total de personal en planilla de tiendas de la marca × 100.</p>
         </div>
         <button class="btn" id="btn-new-foll">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
@@ -535,8 +559,8 @@
             <thead>
               <tr>
                 <th>Comunidad</th><th>Mes</th>
-                <th class="num">Seguidores totales</th><th class="num">Seguidores tienda</th>
-                <th class="num">% Tienda</th><th class="num">Variación</th><th></th>
+                <th class="num">Seguidores página</th><th class="num">Personal que sigue</th>
+                <th class="num">Personal en planilla</th><th class="num">% Seguidores</th><th class="num">Variación</th><th></th>
               </tr>
             </thead>
             <tbody id="foll-table-body"></tbody>
@@ -587,6 +611,7 @@
           <select id="post-com" required>
             <option value="TM SQUAD">TM SQUAD</option>
             <option value="ISACREW">ISACREW</option>
+            <option value="Colaboración">Colaboración (ambas comunidades)</option>
           </select>
         </div>
         <div class="field">
@@ -638,12 +663,13 @@
 <div class="overlay" id="overlay-eng">
   <div class="modal">
     <div class="modal-head">
-      <h3>Registrar engagement del mes</h3>
+      <h3 id="eng-modal-title">Registrar engagement del mes</h3>
       <button class="modal-close" data-close="overlay-eng">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <form id="form-eng">
+      <input type="hidden" id="eng-id">
       <div class="field-row">
         <div class="field">
           <label>Comunidad</label>
@@ -673,6 +699,11 @@
         <label>Alcance (cuentas alcanzadas)</label>
         <input type="number" id="eng-alcance" min="0" value="0" required>
       </div>
+      <div class="field">
+        <label>Seguidores de la página</label>
+        <input type="number" id="eng-seguidores" min="1" placeholder="Opcional">
+        <div class="hint">Total de seguidores de la página en el mes. Si lo dejas vacío, se toma del registro de Seguidores de la misma comunidad y mes.</div>
+      </div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" data-close="overlay-eng">Cancelar</button>
         <button type="submit" class="btn">Guardar registro</button>
@@ -685,12 +716,13 @@
 <div class="overlay" id="overlay-foll">
   <div class="modal">
     <div class="modal-head">
-      <h3>Registrar seguidores del mes</h3>
+      <h3 id="foll-modal-title">Registrar seguidores del mes</h3>
       <button class="modal-close" data-close="overlay-foll">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <form id="form-foll">
+      <input type="hidden" id="foll-id">
       <div class="field-row">
         <div class="field">
           <label>Comunidad</label>
@@ -708,9 +740,14 @@
         <label>Año</label>
         <input type="number" id="foll-anio" value="2026" required>
       </div>
+      <div class="field">
+        <label>Seguidores totales de la página</label>
+        <input type="number" id="foll-total" min="0" required>
+        <div class="hint">Se usa como base para calcular el engagement del mes.</div>
+      </div>
       <div class="field-row">
-        <div class="field"><label>Seguidores totales</label><input type="number" id="foll-total" min="0" required></div>
-        <div class="field"><label>Seguidores de tienda</label><input type="number" id="foll-tienda" min="0" required></div>
+        <div class="field"><label>Personal de tienda que sigue la página</label><input type="number" id="foll-tienda" min="0" required></div>
+        <div class="field"><label>Total de personal en planilla de tiendas</label><input type="number" id="foll-planilla" min="1" placeholder="Planilla de la marca"></div>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn ghost" data-close="overlay-foll">Cancelar</button>
@@ -725,7 +762,15 @@
   "use strict";
 
   const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-  const COM_COLORS = { "TM SQUAD":"tm", "ISACREW":"isa" };
+  const COMUNIDADES = ["TM SQUAD","ISACREW","Colaboración"]; // Colaboración = contenido dirigido a ambas comunidades
+  const COM_COLORS = { "TM SQUAD":"tm", "ISACREW":"isa", "Colaboración":"colab" };
+  const NO_DATA = '<span class="nodata">Sin datos</span>';
+  const comClass = com => COM_COLORS[com] || "tm";
+  const comTag = com => `<span class="com-tag ${comClass(com)}"><span class="sw" style="background:var(--${comClass(com)})"></span>${escapeHtml(com)}</span>`;
+  // Devuelve un entero >= 0, o null si el campo está vacío / no es válido
+  const numOrNull = v => { const n = parseInt(v,10); return Number.isFinite(n) && n >= 0 ? n : null; };
+  const hasNum = v => typeof v === "number" && Number.isFinite(v);
+  const byPeriod = (a,b) => a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes);
 
   /* ---------------- Storage ---------------- */
   const STORE_KEY = "panel_comunidades_v1";
@@ -757,8 +802,8 @@
         {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, likes:980, coment:75, share:40, saves:55, alcance:6200},
       ],
       seguidores:[
-        {id:cryptoId(), com:"TM SQUAD", mes:MESES[today.getMonth()], anio:y, total:24500, tienda:3100},
-        {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, total:15800, tienda:2050},
+        {id:cryptoId(), com:"TM SQUAD", mes:MESES[today.getMonth()], anio:y, total:24500, tienda:3100, planilla:4200},
+        {id:cryptoId(), com:"ISACREW", mes:MESES[today.getMonth()], anio:y, total:15800, tienda:2050, planilla:2900},
       ]
     };
   }
@@ -767,6 +812,9 @@
   }
 
   let state = loadStore();
+  state.posts = state.posts || [];
+  state.engagement = state.engagement || [];
+  state.seguidores = state.seguidores || [];
 
   /* ---------------- Tabs ---------------- */
   const tabBtns = document.querySelectorAll(".tab-btn");
@@ -803,7 +851,7 @@
     calMonth = t.getMonth();
   })();
 
-  const activeFilters = new Set(["TM SQUAD","ISACREW"]);
+  const activeFilters = new Set(COMUNIDADES);
   document.querySelectorAll(".chip-filter").forEach(chip=>{
     chip.addEventListener("click", ()=>{
       const com = chip.dataset.com;
@@ -866,8 +914,8 @@
         pillsWrap.className = "cal-pills";
         dayPosts.slice(0,3).forEach(p=>{
           const pill = document.createElement("div");
-          pill.className = "cal-pill " + COM_COLORS[p.com];
-          pill.innerHTML = `<span class="sw" style="background:var(--${COM_COLORS[p.com]})"></span>${escapeHtml(p.titulo)}`;
+          pill.className = "cal-pill " + comClass(p.com);
+          pill.innerHTML = `<span class="sw" style="background:var(--${comClass(p.com)})"></span>${escapeHtml(p.titulo)}`;
           pillsWrap.appendChild(pill);
         });
         cell.appendChild(pillsWrap);
@@ -882,6 +930,18 @@
       cell.addEventListener("click", ()=> openDayModal(iso));
       grid.appendChild(cell);
     }
+    renderCalSummary();
+  }
+
+  // Resumen del mes visible: publicaciones por comunidad (respeta los filtros activos)
+  function renderCalSummary(){
+    const prefix = `${calYear}-${String(calMonth+1).padStart(2,"0")}-`;
+    const monthPosts = state.posts.filter(p => p.fecha && p.fecha.startsWith(prefix) && activeFilters.has(p.com));
+    const wrap = document.getElementById("cal-summary");
+    wrap.innerHTML = COMUNIDADES.filter(c=>activeFilters.has(c)).map(c=>{
+      const n = monthPosts.filter(p=>p.com===c).length;
+      return `<span class="com-tag ${comClass(c)}"><span class="sw" style="background:var(--${comClass(c)})"></span>${escapeHtml(c)}: <b>${n}</b></span>`;
+    }).join("") + `<span class="com-tag" style="background:var(--surface-2);color:var(--text-dim)">Total del mes: <b>${monthPosts.length}</b></span>`;
   }
 
   function escapeHtml(str){
@@ -910,7 +970,7 @@
         row.className = "day-event";
         row.innerHTML = `
           <div class="meta">
-            <div class="top"><span class="sw" style="background:var(--${COM_COLORS[p.com]})"></span>
+            <div class="top"><span class="sw" style="background:var(--${comClass(p.com)})"></span>
               <span class="title">${escapeHtml(p.titulo)}</span></div>
             <div class="sub">${escapeHtml(p.com)} · ${escapeHtml(p.formato)} · ${escapeHtml(p.estado)}</div>
           </div>
@@ -992,6 +1052,8 @@
 
   /* =========================================================
      ENGAGEMENT
+     Engagement = (likes + comentarios + compartidos + guardados) / seguidores de la página
+     Se muestra como decimal (ej. 150 / 2000 = 0.075), sin multiplicar por 100.
   ========================================================= */
   const engMesSelect = document.getElementById("eng-mes");
   const engFilterMes = document.getElementById("eng-filter-mes");
@@ -1003,17 +1065,41 @@
   engFilterMes.value = "todos";
   engMesSelect.value = MESES[new Date().getMonth()];
 
-  document.getElementById("btn-new-eng").addEventListener("click", ()=>{
+  const interacciones = r => (r.likes||0)+(r.coment||0)+(r.share||0)+(r.saves||0);
+
+  // Seguidores de la página para un registro de engagement: el valor propio del registro
+  // o, si no existe, el total del registro de Seguidores de la misma comunidad, mes y año.
+  function seguidoresPagina(r){
+    if(hasNum(r.seguidores) && r.seguidores > 0) return r.seguidores;
+    const match = state.seguidores.filter(f=>f.com===r.com && f.mes===r.mes && f.anio===r.anio && hasNum(f.total) && f.total > 0);
+    return match.length ? match[match.length-1].total : null;
+  }
+  const fmtEng = v => v.toFixed(3);
+
+  function openEngModal(rec){
     document.getElementById("form-eng").reset();
-    document.getElementById("eng-mes").value = MESES[new Date().getMonth()];
-    document.getElementById("eng-anio").value = new Date().getFullYear();
+    document.getElementById("eng-modal-title").textContent = rec ? "Editar engagement del mes" : "Registrar engagement del mes";
+    document.getElementById("eng-id").value = rec ? rec.id : "";
+    document.getElementById("eng-com").value = rec ? rec.com : "TM SQUAD";
+    document.getElementById("eng-mes").value = rec ? rec.mes : MESES[new Date().getMonth()];
+    document.getElementById("eng-anio").value = rec ? rec.anio : new Date().getFullYear();
+    if(rec){
+      document.getElementById("eng-likes").value = rec.likes||0;
+      document.getElementById("eng-coment").value = rec.coment||0;
+      document.getElementById("eng-share").value = rec.share||0;
+      document.getElementById("eng-saves").value = rec.saves||0;
+      document.getElementById("eng-alcance").value = rec.alcance||0;
+      document.getElementById("eng-seguidores").value = hasNum(rec.seguidores) ? rec.seguidores : "";
+    }
     openOverlay("overlay-eng");
-  });
+  }
+  document.getElementById("btn-new-eng").addEventListener("click", ()=> openEngModal(null));
 
   document.getElementById("form-eng").addEventListener("submit", e=>{
     e.preventDefault();
-    state.engagement.push({
-      id: cryptoId(),
+    const id = document.getElementById("eng-id").value;
+    const seg = numOrNull(document.getElementById("eng-seguidores").value);
+    const data = {
       com: document.getElementById("eng-com").value,
       mes: document.getElementById("eng-mes").value,
       anio: parseInt(document.getElementById("eng-anio").value,10),
@@ -1022,7 +1108,14 @@
       share: parseInt(document.getElementById("eng-share").value,10)||0,
       saves: parseInt(document.getElementById("eng-saves").value,10)||0,
       alcance: parseInt(document.getElementById("eng-alcance").value,10)||0,
-    });
+      seguidores: seg && seg > 0 ? seg : null,
+    };
+    if(id){
+      const idx = state.engagement.findIndex(r=>r.id===id);
+      if(idx >= 0) state.engagement[idx] = {...state.engagement[idx], ...data};
+    } else {
+      state.engagement.push({id: cryptoId(), ...data});
+    }
     saveStore();
     closeOverlay("overlay-eng");
     renderEngagement();
@@ -1040,38 +1133,51 @@
     if(filterCom !== "todas") rows = rows.filter(r=>r.com === filterCom);
 
     // KPIs over filtered rows
-    const sum = key => rows.reduce((a,r)=>a+r[key],0);
-    const totalInter = sum("likes")+sum("coment")+sum("share")+sum("saves");
-    const totalAlcance = sum("alcance");
-    const engRate = totalAlcance ? (totalInter/totalAlcance*100) : 0;
+    const totalInter = rows.reduce((a,r)=>a+interacciones(r),0);
+    const totalAlcance = rows.reduce((a,r)=>a+(r.alcance||0),0);
+    // Solo se consideran los registros con seguidores de la página conocidos (no se asumen valores)
+    const withFoll = rows.map(r=>({r, seg:seguidoresPagina(r)})).filter(x=>x.seg !== null);
+    const interConSeg = withFoll.reduce((a,x)=>a+interacciones(x.r),0);
+    const segTotal = withFoll.reduce((a,x)=>a+x.seg,0);
+    const engRate = segTotal ? interConSeg/segTotal : null;
+    const missing = rows.length - withFoll.length;
+    const engNote = engRate === null
+      ? "faltan seguidores de la página"
+      : (missing ? `interacciones / seguidores · ${missing} registro(s) sin seguidores excluido(s)` : "interacciones / seguidores de la página");
 
     const kpiWrap = document.getElementById("eng-kpis");
     kpiWrap.innerHTML = `
       <div class="kpi-card"><div class="label">Interacciones totales</div><div class="value">${totalInter.toLocaleString("es")}</div><div class="delta">likes + comentarios + compartidos + guardados</div></div>
       <div class="kpi-card"><div class="label">Alcance acumulado</div><div class="value">${totalAlcance.toLocaleString("es")}</div><div class="delta">cuentas alcanzadas en el filtro actual</div></div>
-      <div class="kpi-card"><div class="label">Tasa de engagement</div><div class="value good">${engRate.toFixed(2)}%</div><div class="delta">interacciones / alcance</div></div>
+      <div class="kpi-card"><div class="label">Engagement</div>${engRate === null ? `<div class="value nodata">Sin datos</div>` : `<div class="value good">${fmtEng(engRate)}</div>`}<div class="delta">${engNote}</div></div>
       <div class="kpi-card"><div class="label">Registros</div><div class="value">${rows.length}</div><div class="delta">meses × comunidad en este filtro</div></div>
     `;
 
     // table
     const tbody = document.getElementById("eng-table-body");
     tbody.innerHTML = "";
-    rows.sort((a,b)=> MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+    rows.sort(byPeriod);
     rows.forEach(r=>{
-      const inter = r.likes+r.coment+r.share+r.saves;
-      const rate = r.alcance ? (inter/r.alcance*100) : 0;
+      const inter = interacciones(r);
+      const seg = seguidoresPagina(r);
+      const rate = seg ? inter/seg : null;
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><span class="com-tag ${COM_COLORS[r.com]}"><span class="sw" style="background:var(--${COM_COLORS[r.com]})"></span>${r.com}</span></td>
+        <td>${comTag(r.com)}</td>
         <td>${r.mes} ${r.anio}</td>
-        <td class="num">${r.likes.toLocaleString("es")}</td>
-        <td class="num">${r.coment.toLocaleString("es")}</td>
-        <td class="num">${r.share.toLocaleString("es")}</td>
-        <td class="num">${r.saves.toLocaleString("es")}</td>
-        <td class="num">${r.alcance.toLocaleString("es")}</td>
+        <td class="num">${(r.likes||0).toLocaleString("es")}</td>
+        <td class="num">${(r.coment||0).toLocaleString("es")}</td>
+        <td class="num">${(r.share||0).toLocaleString("es")}</td>
+        <td class="num">${(r.saves||0).toLocaleString("es")}</td>
+        <td class="num">${(r.alcance||0).toLocaleString("es")}</td>
         <td class="num">${inter.toLocaleString("es")}</td>
-        <td class="num">${rate.toFixed(2)}%</td>
-        <td><div class="row-actions"><button class="icon-btn danger del-eng" data-id="${r.id}" title="Eliminar">
+        <td class="num">${seg === null ? NO_DATA : seg.toLocaleString("es")}</td>
+        <td class="num">${rate === null ? NO_DATA : fmtEng(rate)}</td>
+        <td><div class="row-actions">
+          <button class="icon-btn edit-eng" data-id="${r.id}" title="Editar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="icon-btn danger del-eng" data-id="${r.id}" title="Eliminar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
         </button></div></td>`;
       tbody.appendChild(tr);
@@ -1082,6 +1188,12 @@
   }
 
   document.getElementById("eng-table-body").addEventListener("click", e=>{
+    const editBtn = e.target.closest(".edit-eng");
+    if(editBtn){
+      const rec = state.engagement.find(r=>r.id === editBtn.dataset.id);
+      if(rec) openEngModal(rec);
+      return;
+    }
     const btn = e.target.closest(".del-eng");
     if(!btn) return;
     if(confirm("¿Eliminar este registro de engagement?")){
@@ -1095,14 +1207,14 @@
     const year = new Date().getFullYear();
     const totalsByMonth = MESES.map(m=>{
       const rows = state.engagement.filter(r=>r.mes===m && r.anio===year);
-      return rows.reduce((a,r)=>a + r.likes+r.coment+r.share+r.saves, 0);
+      return rows.reduce((a,r)=>a + interacciones(r), 0);
     });
     const max = Math.max(...totalsByMonth, 1);
     const wrap = document.getElementById("eng-sparkline");
     wrap.innerHTML = "";
     totalsByMonth.forEach((val, i)=>{
       const bar = document.createElement("div");
-      bar.className = "spark-bar" + (i % 2 === 0 ? "" : "");
+      bar.className = "spark-bar";
       bar.style.height = Math.max(2, (val/max*100)) + "%";
       bar.title = `${MESES[i]}: ${val.toLocaleString("es")} interacciones`;
       wrap.appendChild(bar);
@@ -1111,31 +1223,53 @@
 
   /* =========================================================
      SEGUIDORES
+     Seguidores (%) = personal de tienda que sigue la página / total de personal
+     en planilla de tiendas de la marca × 100 (calculado por marca/comunidad).
   ========================================================= */
   const follMesSelect = document.getElementById("foll-mes");
   MESES.forEach(m=> follMesSelect.add(new Option(m,m)));
   follMesSelect.value = MESES[new Date().getMonth()];
 
-  document.getElementById("btn-new-foll").addEventListener("click", ()=>{
+  const pctSeguidores = r => (hasNum(r.tienda) && hasNum(r.planilla) && r.planilla > 0) ? r.tienda/r.planilla*100 : null;
+
+  function openFollModal(rec){
     document.getElementById("form-foll").reset();
-    document.getElementById("foll-mes").value = MESES[new Date().getMonth()];
-    document.getElementById("foll-anio").value = new Date().getFullYear();
+    document.getElementById("foll-modal-title").textContent = rec ? "Editar seguidores del mes" : "Registrar seguidores del mes";
+    document.getElementById("foll-id").value = rec ? rec.id : "";
+    document.getElementById("foll-com").value = rec ? rec.com : "TM SQUAD";
+    document.getElementById("foll-mes").value = rec ? rec.mes : MESES[new Date().getMonth()];
+    document.getElementById("foll-anio").value = rec ? rec.anio : new Date().getFullYear();
+    if(rec){
+      document.getElementById("foll-total").value = hasNum(rec.total) ? rec.total : "";
+      document.getElementById("foll-tienda").value = hasNum(rec.tienda) ? rec.tienda : "";
+      document.getElementById("foll-planilla").value = hasNum(rec.planilla) ? rec.planilla : "";
+    }
     openOverlay("overlay-foll");
-  });
+  }
+  document.getElementById("btn-new-foll").addEventListener("click", ()=> openFollModal(null));
 
   document.getElementById("form-foll").addEventListener("submit", e=>{
     e.preventDefault();
-    state.seguidores.push({
-      id: cryptoId(),
+    const id = document.getElementById("foll-id").value;
+    const planilla = numOrNull(document.getElementById("foll-planilla").value);
+    const data = {
       com: document.getElementById("foll-com").value,
       mes: document.getElementById("foll-mes").value,
       anio: parseInt(document.getElementById("foll-anio").value,10),
       total: parseInt(document.getElementById("foll-total").value,10)||0,
       tienda: parseInt(document.getElementById("foll-tienda").value,10)||0,
-    });
+      planilla: planilla && planilla > 0 ? planilla : null,
+    };
+    if(id){
+      const idx = state.seguidores.findIndex(r=>r.id===id);
+      if(idx >= 0) state.seguidores[idx] = {...state.seguidores[idx], ...data};
+    } else {
+      state.seguidores.push({id: cryptoId(), ...data});
+    }
     saveStore();
     closeOverlay("overlay-foll");
     renderSeguidores();
+    renderEngagement(); // el engagement usa los seguidores de la página
   });
 
   document.getElementById("foll-filter-com").addEventListener("change", renderSeguidores);
@@ -1144,43 +1278,41 @@
     const filterCom = document.getElementById("foll-filter-com").value;
     let rows = state.seguidores.slice();
     if(filterCom !== "todas") rows = rows.filter(r=>r.com===filterCom);
-    rows.sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+    rows.sort(byPeriod);
 
     // KPI: latest record per community
     const kpiWrap = document.getElementById("foll-kpis");
     const communities = filterCom === "todas" ? ["TM SQUAD","ISACREW"] : [filterCom];
     let kpiHtml = "";
     communities.forEach(com=>{
-      const comRows = state.seguidores.filter(r=>r.com===com)
-        .sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+      const comRows = state.seguidores.filter(r=>r.com===com).sort(byPeriod);
       const latest = comRows[comRows.length-1];
       const prev = comRows[comRows.length-2];
-      const total = latest ? latest.total : 0;
-      const tienda = latest ? latest.tienda : 0;
-      const pct = total ? (tienda/total*100) : 0;
+      const pct = latest ? pctSeguidores(latest) : null;
       const delta = (latest && prev) ? (latest.total - prev.total) : null;
-      const colorClass = COM_COLORS[com];
+      const colorClass = comClass(com);
       kpiHtml += `
         <div class="kpi-card">
-          <div class="label">${com} · Seguidores totales</div>
-          <div class="value ${colorClass}">${total.toLocaleString("es")}</div>
-          <div class="delta">${delta===null ? "Sin mes anterior para comparar" : (delta>=0?"+":"")+delta.toLocaleString("es")+" vs. mes anterior"}</div>
+          <div class="label">${escapeHtml(com)} · Seguidores (%)</div>
+          ${pct === null ? `<div class="value nodata">Sin datos</div>` : `<div class="value ${colorClass}">${pct.toFixed(1)}%</div>`}
+          <div class="delta">${latest
+            ? (pct === null ? "Falta el total de personal en planilla" : `${latest.tienda.toLocaleString("es")} de ${latest.planilla.toLocaleString("es")} en planilla`) + ` · ${latest.mes} ${latest.anio}`
+            : "Sin registros"}</div>
         </div>
         <div class="kpi-card">
-          <div class="label">${com} · Seguidores de tienda</div>
-          <div class="value">${tienda.toLocaleString("es")}</div>
-          <div class="delta">${pct.toFixed(1)}% del total</div>
+          <div class="label">${escapeHtml(com)} · Seguidores de la página</div>
+          ${latest ? `<div class="value">${latest.total.toLocaleString("es")}</div>` : `<div class="value nodata">Sin datos</div>`}
+          <div class="delta">${delta===null ? "Sin mes anterior para comparar" : (delta>=0?"+":"")+delta.toLocaleString("es")+" vs. mes anterior"}</div>
         </div>`;
     });
     kpiWrap.innerHTML = kpiHtml;
 
     const tbody = document.getElementById("foll-table-body");
     tbody.innerHTML = "";
-    rows.forEach((r,idx)=>{
-      const pct = r.total ? (r.tienda/r.total*100) : 0;
+    rows.forEach(r=>{
+      const pct = pctSeguidores(r);
       // find previous month for same community for variation
-      const sameCom = state.seguidores.filter(x=>x.com===r.com)
-        .sort((a,b)=> a.anio-b.anio || MESES.indexOf(a.mes)-MESES.indexOf(b.mes));
+      const sameCom = state.seguidores.filter(x=>x.com===r.com).sort(byPeriod);
       const posInCom = sameCom.findIndex(x=>x.id===r.id);
       const prev = posInCom > 0 ? sameCom[posInCom-1] : null;
       const variation = prev ? r.total - prev.total : null;
@@ -1189,13 +1321,18 @@
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><span class="com-tag ${COM_COLORS[r.com]}"><span class="sw" style="background:var(--${COM_COLORS[r.com]})"></span>${r.com}</span></td>
+        <td>${comTag(r.com)}</td>
         <td>${r.mes} ${r.anio}</td>
-        <td class="num">${r.total.toLocaleString("es")}</td>
-        <td class="num">${r.tienda.toLocaleString("es")}</td>
-        <td class="num">${pct.toFixed(1)}%</td>
+        <td class="num">${hasNum(r.total) ? r.total.toLocaleString("es") : NO_DATA}</td>
+        <td class="num">${hasNum(r.tienda) ? r.tienda.toLocaleString("es") : NO_DATA}</td>
+        <td class="num">${hasNum(r.planilla) && r.planilla > 0 ? r.planilla.toLocaleString("es") : NO_DATA}</td>
+        <td class="num">${pct === null ? NO_DATA : pct.toFixed(1)+"%"}</td>
         <td class="num" style="color:${varColor}">${varStr}</td>
-        <td><div class="row-actions"><button class="icon-btn danger del-foll" data-id="${r.id}" title="Eliminar">
+        <td><div class="row-actions">
+          <button class="icon-btn edit-foll" data-id="${r.id}" title="Editar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button class="icon-btn danger del-foll" data-id="${r.id}" title="Eliminar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6"/></svg>
         </button></div></td>`;
       tbody.appendChild(tr);
@@ -1204,12 +1341,19 @@
   }
 
   document.getElementById("foll-table-body").addEventListener("click", e=>{
+    const editBtn = e.target.closest(".edit-foll");
+    if(editBtn){
+      const rec = state.seguidores.find(r=>r.id === editBtn.dataset.id);
+      if(rec) openFollModal(rec);
+      return;
+    }
     const btn = e.target.closest(".del-foll");
     if(!btn) return;
     if(confirm("¿Eliminar este registro de seguidores?")){
       state.seguidores = state.seguidores.filter(r=>r.id !== btn.dataset.id);
       saveStore();
       renderSeguidores();
+      renderEngagement();
     }
   });
 
